@@ -1,0 +1,44 @@
+{% extends "navBar.html" %}
+{%block head%} 
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- CSS  -->
+  <link href="/static/materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="/static/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+{% endblock %}
+
+{% block page %}
+
+
+
+
+<a href="{%url 'index' %}">Return home</a>
+<br><br>
+<div class = "row">
+<form class = "col s8" action="{%url 'deviceAdded' %}" method="post">
+  	{% for field in AddDeviceForm.visible_fields %}
+	<div class="input-field col s6">
+		{{field.label_tag}}
+    	<br>{{field}}<br><br>
+	</div>
+    <div style="color: red">{{field.errors}}</div>
+  {% endfor %}
+  <br>
+ <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+    <i class="mdi-content-send right"></i>
+  </button>
+    {% csrf_token %}
+</form>
+</div>
+
+{%endblock %}
+
+{% block script %} 
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="../static/materialize/js/materialize.js"></script>
+  <script src="../static/materialize/js/init.js"></script>
+  {% endblock %}
