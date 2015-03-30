@@ -2,6 +2,8 @@ import subprocess
 from svmutil import *
 import sys
 
+_DEBUG = False
+
 #import sklearn.covariance
 
 # In order to run this, you must install LIBSVM, add the LIBSVM
@@ -10,6 +12,13 @@ import sys
 
 #This is arbitrary
 THRESHOLD_COEFF = 0.15
+
+def get_model_file_name(input_file_name):
+	input_file_name + ".model"
+
+def get_one_class_model_file_name(input_file_name):
+	input_file_name+ ".one_class_model"
+
 
 def get_scale_param_file_name(input_file_name):
 	return input_file_name +".scaling_params"
@@ -35,7 +44,7 @@ def get_one_class_model(scaled_input_file_name, orig_file_name):
 	labels, x = svm_read_problem(scaled_input_file_name)
 	#-s 2 means one-class -t 2 means do RBF
 	model = svm_train(labels, x, "-s 2 -t 2")
-	model_file_name = orig_file_name + ".one_class_model"
+	model_file_name = get_one_class_model_file_name(orig_file_name)
 	svm_save_model(model_file_name, model)
 
 	#get w, the separating hyperplane
@@ -53,16 +62,15 @@ def scale_and_train(input_file_name):
 		scaled_name = scale(input_file_name)
 
 		labels, x = svm_read_problem(scaled_name)
-		print ("len(x) = {0}".format(len(x)))
+		if(_DEBUG):
+			print ("len(x) = {0}".format(len(x)))
 		#-t 0 means do linear
 		#-t 2 means rbf
 		model = svm_train(labels, x, "-t 2")
 
-		model_file_name = input_file_name + ".model"
+		model_file_name = get_model_name(input_file_name)
 		svm_save_model(model_file_name, model)
-		#TODO: append scaling data?
 		
-		#get w, the separating hyperplane
 		support_vectors = model.get_SV()
 		coefs = model.get_sv_coef()
 
@@ -89,10 +97,11 @@ def scale_and_train(input_file_name):
 
 		bias = 	sgn * model.rho.contents.value
 
-		print "Hyperplane vector is " + repr(w)
-		print "Bias is "  + str(bias)
-		if(len(unimportant_dim_nums) > 0):
-			print "Dimension(s) " + ",".join(map(str, unimportant_dim_nums)) + " have little impact on outcome"
+		if(_DEBUG):
+			print "Hyperplane vector is " + repr(w)
+			print "Bias is "  + str(bias)
+			if(len(unimportant_dim_nums) > 0):
+				print "Dimension(s) " + ",".join(map(str, unimportant_dim_nums)) + " have little impact on outcome"
 
 		vector_file.write("num_features: " + str(len(w)) + "\nw: " + repr(w) + "\nbias: " + str(bias))
 	except Exception as e:
@@ -140,7 +149,7 @@ def sv_to_list_of_lists(SVs):
 #This is really just for testing
 def main():
 	if len(sys.argv) != 2:
-		print "Usaage : python train.py <name of input data file>"
+		print "Usage : python train.py <name of input data file>"
 		return
 	(one_class_model, two_class_model) = scale_and_train(sys.argv[1])
 	# test_file_name = 'data/test'
