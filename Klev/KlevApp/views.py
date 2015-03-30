@@ -13,25 +13,29 @@ from django.core.mail import send_mail
 from mimetypes import guess_type
 from KlevApp.models import *
 from KlevApp.forms import *
+
+from KlevApp.ml import *
+
+
 import json
 import requests
 # Create your views here.
 
 
-def index(request):
+def Index(request):
 	context = {}
 	return render(request, 'index.html', context)
 
-def addDevice(request):
+def AddDevice(request):
 	context = {}
 	context['AddDeviceForm'] = AddDeviceForm()
 	return render(request, 'addDevice.html', context)
 
-def devices(request):
+def Devices(request):
 	context = {}
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
 
-def deviceAdded(request):
+def DeviceAdded(request):
 	print(request)
 	newDevice = Device(deviceName = request.POST.get('deviceName'),
 	make = request.POST.get('make'), modelNum = request.POST.get('modelNum'),
@@ -39,3 +43,79 @@ def deviceAdded(request):
 	photo = request.POST.get('photo'),)
 	newDevice.save()
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
+
+
+
+########
+# View Functions for Training
+########
+def TrainDevice(request):
+	# Gets device from objects
+	## TODO: need to better filter that you're getting the correct device
+	print(request.POST)
+	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	print(device)
+	context = {}
+	return render(request, 'trainDevice.html', {'device':device})
+
+## Device now in the off state, training should start
+def TrainOff(request):
+	# Gets device from objects
+	## TODO: need to better filter that you're getting the correct device
+	print(request.POST)
+	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	print(device)
+	context = {}
+	return render(request, 'finishOff.html', {'device':device})
+
+
+## User has now manually ended 'off' training at the end of 5 minutes
+# ML should stop 'off' training and get ready for user to turn on Device for on training
+def FinishOff(request):
+	# Gets device from objects
+	## TODO: need to better filter that you're getting the correct device
+	print(request.POST)
+	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	print(device)
+	context = {}
+	return render(request, 'trainOn.html', {'device':device})
+
+
+def TrainOn(request):
+	# Gets device from objects
+	## TODO: need to better filter that you're getting the correct device
+	print(request.POST)
+	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	print(device)
+	context = {}
+	return render(request, 'finishOn.html', {'device':device})
+
+# User has now manually ended 'on' training at the end of 5 minutes
+# ML should stop 'on' training and return to devices
+def FinishOn(request):
+	# Gets device from objects
+	## TODO: need to better filter that you're getting the correct device
+	print(request.POST)
+	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	print(device)
+	context = {}
+	return render(request, 'finishTrainOff.html', {'device':device})
+
+def TrainingFinished(request):
+	# Gets device from objects
+	## TODO: need to better filter that you're getting the correct device
+	print(request.POST)
+	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	print(device)
+	# TODO: update device state based on ML: 
+	# device['deviceState'] = # Code that uses ML to test device state
+	setattr(device, 'deviceState', 'field value')
+	setattr(device, 'trained', 1)
+	context = {}
+	print("device data:")
+	print(getattr(device, 'trained'))
+	return render(request, 'devices.html', {'devices':Device.objects.all()})
+
+
+
+

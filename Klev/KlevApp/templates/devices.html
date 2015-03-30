@@ -22,7 +22,11 @@
       {% if device.trained == 0%}
       <div class="card grey">
       {%else %}
+      {% if device.deviceState == 'on'%}
+      <div class="card green">
+      {% else %}
       <div class="card red">
+        {% endif %}
       {%endif%}
 
         <div class="card-content">
@@ -32,11 +36,18 @@
           <h6 class="center-align"> Location: {{device.location}} </h6>
           {% if device.trained == 1%}
           <h6 class="center-align"> Device is Trained </h6>
+          <h6 class="center-align"> State: {{device.deviceState}} </h6>
+
           </div>
           {%else %}
           <h6 class="center-align"> Device is Untrained! </h6>
           <div class = "center-align"> 
-            <a class="waves-effect waves-light btn">Train Now! </a>
+            <form action="{%url 'trainDevice' %}" method="post">
+              <input type="hidden" name="Device" value="{{device.deviceName}}">
+              <button class="waves-effect waves-light btn" type="submit" name="action">Train Now! </a>
+              {% csrf_token %}
+
+            </form>
           </div>
           </div>
           {%endif%}
