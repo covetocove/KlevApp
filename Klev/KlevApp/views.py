@@ -33,7 +33,14 @@ def AddDevice(request):
 
 def Devices(request):
 	context = {}
-	return render(request, 'devices.html', {'devices':Device.objects.all()})
+	devices = Device.objects.all()
+	print("length devices")
+	print(len(devices))
+	for i in xrange(0,len(devices)):
+		print(getattr(devices[i], 'deviceName'))
+		print(getattr(devices[i], 'deviceState'))
+		print(getattr(devices[i], 'trained'))
+	return render(request, 'devices.html', {'devices':devices})
 
 def DeviceAdded(request):
 	print(request)
@@ -53,7 +60,7 @@ def TrainDevice(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
 	return render(request, 'trainDevice.html', {'device':device})
@@ -63,7 +70,7 @@ def TrainOff(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
 	return render(request, 'finishOff.html', {'device':device})
@@ -75,7 +82,7 @@ def FinishOff(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
 	return render(request, 'trainOn.html', {'device':device})
@@ -85,7 +92,7 @@ def TrainOn(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
 	return render(request, 'finishOn.html', {'device':device})
@@ -96,7 +103,7 @@ def FinishOn(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
 	return render(request, 'finishTrainOff.html', {'device':device})
@@ -105,15 +112,24 @@ def TrainingFinished(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().filter(deviceName= request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	# TODO: update device state based on ML: 
 	# device['deviceState'] = # Code that uses ML to test device state
 	setattr(device, 'deviceState', 'field value')
 	setattr(device, 'trained', 1)
 	context = {}
+	print(device)
 	print("device data:")
+	print("deviceName")
+	print(getattr(device, 'deviceName'))
+	print("state")
+
+	print(getattr(device, 'deviceState'))
+	print("trained")
+
 	print(getattr(device, 'trained'))
+	device.save()
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
 
 
