@@ -14,7 +14,7 @@ from mimetypes import guess_type
 from KlevApp.models import *
 from KlevApp.forms import *
 
-from KlevApp.ml import *
+from KlevApp.ml.app_train_interface import train_state
 
 
 import json
@@ -73,6 +73,7 @@ def TrainOff(request):
 	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
+	train_state(device.deviceName, False)
 	return render(request, 'finishOff.html', {'device':device})
 
 
@@ -95,6 +96,7 @@ def TrainOn(request):
 	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
+	train_state(device.deviceName, True)
 	return render(request, 'finishOn.html', {'device':device})
 
 # User has now manually ended 'on' training at the end of 5 minutes

@@ -13,11 +13,11 @@ _DEBUG = False
 #This is arbitrary
 THRESHOLD_COEFF = 0.15
 
-def get_model_file_name(input_file_name):
-	input_file_name + ".model"
+def get_two_class_model_file_name(input_file_name):
+	return input_file_name + ".model"
 
 def get_one_class_model_file_name(input_file_name):
-	input_file_name+ ".one_class_model"
+	return input_file_name+ ".one_class_model"
 
 
 def get_scale_param_file_name(input_file_name):
@@ -40,37 +40,37 @@ def scale(input_file_name, param_file_name=None):
 
 # Assumes that scaled_input_file_name already scaled, and the parameters
 # file has been created and has name get_scale_param_file_name(orig_file_name)
-def get_one_class_model(scaled_input_file_name, orig_file_name):
+# Use one-class for novelty detection
+def get_rbf_model(scaled_input_file_name, orig_file_name, is_one_class=False):
 	labels, x = svm_read_problem(scaled_input_file_name)
 	#-s 2 means one-class -t 2 means do RBF
-	model = svm_train(labels, x, "-s 2 -t 2")
-	model_file_name = get_one_class_model_file_name(orig_file_name)
+	options = None
+	if is_one_class:
+		options = "-t 2"
+	else:
+		options = "-s 2 -t 2"
+	model = svm_train(labels, x, options)
+	model_file_name = None
+	if is_one_class:
+		model_file_name = get_two_class_model_file_name(orig_file_name)
+	else:
+		model_file_name = get_one_class_model_file_name(orig_file_name)
+	print "Saved rbf model to {0}".format(model_file_name)
 	svm_save_model(model_file_name, model)
-
-	#get w, the separating hyperplane
-	support_vectors = model.get_SV()
 	
 	return model
 
-
 def scale_and_train(input_file_name):
-	vector_file_name = input_file_name + ".hyperplane"
-	vector_file = open(vector_file_name, "w")
 	scaled_name = None
 	model = None
-	try:
-		scaled_name = scale(input_file_name)
+	scaled_name = scale(input_file_name)
 
-		labels, x = svm_read_problem(scaled_name)
-		if(_DEBUG):
-			print ("len(x) = {0}".format(len(x)))
-		#-t 0 means do linear
-		#-t 2 means rbf
-		model = svm_train(labels, x, "-t 2")
+	two_class_model = get_rbf_model(scaled_name, input_file_name, is_one_class = False)
+	one_class_model = get_rbf_model(scaled_name, input_file_name, is_one_class = True)
+	return (one_class_model, model)
 
-		model_file_name = get_model_name(input_file_name)
-		svm_save_model(model_file_name, model)
-		
+
+def get_w_and_unimportant_dims(model):
 		support_vectors = model.get_SV()
 		coefs = model.get_sv_coef()
 
@@ -94,23 +94,7 @@ def scale_and_train(input_file_name):
 			if abs(w[i]) < THRESHOLD_COEFF * largest_comp:
 				unimportant_dim_nums.append(i)
 
-
-		bias = 	sgn * model.rho.contents.value
-
-		if(_DEBUG):
-			print "Hyperplane vector is " + repr(w)
-			print "Bias is "  + str(bias)
-			if(len(unimportant_dim_nums) > 0):
-				print "Dimension(s) " + ",".join(map(str, unimportant_dim_nums)) + " have little impact on outcome"
-
-		vector_file.write("num_features: " + str(len(w)) + "\nw: " + repr(w) + "\nbias: " + str(bias))
-	except Exception as e:
-		print e
-	finally:
-		vector_file.close()
-
-	one_class_model = get_one_class_model(scaled_name, input_file_name)
-	return (one_class_model, model)
+		return (w, unimportant_dim_nums)
 
 #Get the vector for the hyperplane
 def get_w(coefs, labels, SV_list, sgn):

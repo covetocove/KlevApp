@@ -1,38 +1,65 @@
+
+from generate_sample import generate_sample_data
+
 class DummyReader:
+
+	ON = 'on'
+	OFF = 'off'
+
+	pos_center = (1,2,3,4,5,6)
+	neg_center = (6,5,4,3,2,1)
+
+	pos_noise = 0.5
+	neg_noise = 0.5
+
+	num_pos_examples = 100
+	num_neg_examples = 100
+
 	def __init__(self):
-		self.DATA_STRINGS = '''9.79862726656 9.98905797144 9.97196757436
-9.93208390056 9.51682254847 10.4531578568
-9.5485137535 10.0030981206 10.3940100046
-9.94534559642 9.95891396408 9.69884758159
-10.0364433067 9.65933838946 9.83632867946
-9.97523460856 9.99807165765 10.4253013729
-9.82326537093 10.011420212 10.2814051553
-10.3407204007 10.2773097784 9.60834326349
-9.56572604801 10.3727872742 9.96412956995
-10.2830573296 10.1511034919 10.3249918493
-10.0190261433 9.97094121727 10.3617381923
-9.82794516456 10.047105428 9.61011164639
-DONE'''.split("\n")
+		self.state = None
+		self.data = None
+		self.examples_read = 0
 
-		self.CUR_LINE = 0
-	def start_on_training():
-		pass
 
-	def start_off_training():
-		pass
+	def start_on_training(self, device_id):
+		self.state = DummyReader.ON
+		self.examples_read = 0
+		self.data = generate_sample_data(self.pos_center, 
+											self.neg_center,
+											self.pos_noise,
+											self.neg_noise,
+											self.num_pos_examples,
+											0) #no negative (off) examples
+		
 
-	def end_training():
+	def start_off_training(self, device_id):
+		self.state = DummyReader.OFF
+		self.examples_read = 0
+		self.data = self.pos_data = generate_sample_data(self.pos_center, 
+											self.neg_center,
+											self.pos_noise,
+											self.neg_noise,
+											0,
+											self.num_neg_examples) #no negative (off) examples
+
+	def end_training(self, device_id):
 		pass
 
 	'''Real impl should read a line over 802.15.4, block until one available'''
 	def read_line(self, device_id):
-		result = self.DATA_STRINGS[self.CUR_LINE]
-		self.CUR_LINE += 1
-		if(self.CUR_LINE == len(self.DATA_STRINGS)):
-			self.CUR_LINE = 0
-		return result
+		if self.state is None:
+			print "[DummyReader#read_line()] Trying to read while in None state"
+			return None
 
-	def end_of_msg_str():
+		if(self.examples_read == len(self.data)):
+			return self.end_of_msg_str()
+		else:
+			example = self.data[self.examples_read]
+			self.examples_read += 1
+			return " ".join(map(str, example.features))
+		
+
+	def end_of_msg_str(self):
 		return "DONE"
 
 

@@ -1,4 +1,5 @@
 import random
+import sys
 
 class Example:
 	def __init__(self, label, features):
@@ -52,15 +53,15 @@ def write_data(output_file_name, data, include_label=True):
 
 
 def main():
-	center_pos = [10,10,10]
-	center_neg = [0,0,0]
+	center_pos = range(10)
+	center_neg = range(-10, -20, -1)
 	#center_pos = [4, 8, 15, 16, 23, 42]
 	#center_neg = [-4, -20, -21, -23, -26, -35]
 	error_pos = 0.5
 	error_neg = 1.0
-	num_pos= 50
-	num_neg = 50
-	output_file_name = "data/sample"
+	num_pos= 1000
+	num_neg = 1000
+	output_file_name = sys.argv[1]
 
 	data = generate_sample_data(center_pos, center_neg, error_pos, error_neg, num_pos, num_neg)
 	write_data(output_file_name, data, include_label=True)
