@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'KlevApp',
+    'background_task'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -66,6 +67,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

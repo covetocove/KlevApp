@@ -18,6 +18,7 @@ def convert_line_to_libsvm_example(is_positive, feature_string):
 		result_str_list.append(" {0}:{1}".format(i+1, features[i]))
 	return ''.join(result_str_list)
 
+#TODO: handle case where device_id is the name of the device and has spaces
 def train_state(device_id, is_on):
 
 	data_file_name = get_data_file_name(device_id)
