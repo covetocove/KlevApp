@@ -1,5 +1,6 @@
 # This is a file for the background tasks. 
 # Make sure to have django-background-task 0.1.8 installed
+# In order to have tasks run, run "python manage.py process_tasks"
 from background_task import background
 
 def start_listen_for_updates(device):
