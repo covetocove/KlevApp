@@ -1,6 +1,10 @@
 from django.db import models
-from django.db.models.signals import post_init
-from tasks import start_listen_for_updates
+
+import tasks
+
+ON_STATE = 'ON'
+OFF_STATE = 'OFF'
+ABNORMAL_STATE = 'ABNORMAL'
 
 # Create your models here.
 class Device(models.Model):
@@ -12,12 +16,14 @@ class Device(models.Model):
 	trained = models.IntegerField(default = 0);
 	photo = models.ImageField(upload_to="deviceImages", null=True, blank=True, default = None)
 
-def extra_device_setup(**kwargs):
-	instance = kwargs.get('instance')
-	print "---- {0}".format(str(instance))
-	start_listen_for_updates(instance.deviceName)
+def extra_device_setup(sender, instance, created, *args, **kwargs):
+	if created:
+		print "---Performing extra setup for new device---"
+		instance = kwargs.get('instance')
+		tasks.start_listen_for_updates(instance.deviceName)
 
-post_init.connect(extra_device_setup, Device)
+from django.db.models.signals import post_save
+post_save.connect(extra_device_setup, sender=Device)
 
 #end of Device stuff
 

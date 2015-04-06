@@ -1,4 +1,7 @@
 from django.conf.urls import patterns, include, url
+from django.db import models
+from tasks import start_listen_for_updates
+
 
 urlpatterns = patterns('',
     url(r'^$', 'KlevApp.views.Index', name='index'),
@@ -11,9 +14,7 @@ urlpatterns = patterns('',
 	url(r'^trainOn/$', 'KlevApp.views.TrainOn', name='trainOn'),
 	url(r'^finishOn/$', 'KlevApp.views.FinishOn', name='finishOn'),
 	url(r'^trainingFinished/$', 'KlevApp.views.TrainingFinished', name='trainingFinished'),
-
-
-
-
-
 )
+
+
+
