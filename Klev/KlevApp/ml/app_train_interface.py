@@ -2,6 +2,10 @@ data_and_files_dir = "data_and_models"
 
 import dummy_reader
 import train
+import urllib
+
+def sanitize_device_id(device_id):
+	return str(device_id).replace(" ", "$_")
 
 def get_data_file_name(device_id):
 	return "KlevApp/ml/data_and_models/data_{0}".format(device_id)
@@ -20,6 +24,7 @@ def convert_line_to_libsvm_example(is_positive, feature_string):
 
 #TODO: handle case where device_id is the name of the device and has spaces
 def train_state(device_id, is_on):
+	device_id = sanitize_device_id(device_id)
 
 	data_file_name = get_data_file_name(device_id)
 	data_file = None

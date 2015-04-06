@@ -19,7 +19,6 @@ class Device(models.Model):
 def extra_device_setup(sender, instance, created, *args, **kwargs):
 	if created:
 		print "---Performing extra setup for new device---"
-		instance = kwargs.get('instance')
 		tasks.start_listen_for_updates(instance.deviceName)
 
 from django.db.models.signals import post_save
