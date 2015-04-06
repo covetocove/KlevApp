@@ -22,8 +22,10 @@
       {% if device.trained == 0%}
       <div class="card grey">
       {%else %}
-      {% if device.deviceState == 'on'%}
+      {% if device.deviceState == 'ON'%}
       <div class="card green">
+      {% elif device.deviceState == 'OFF' %}
+      <div class="card blue">
       {% else %}
       <div class="card red">
         {% endif %}
