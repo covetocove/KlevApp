@@ -9,8 +9,8 @@ function sendRequest() {
     }
     req.onreadystatechange = handleResponse;
     req.open("GET", "/klev/get-devices", true);
-    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-    req.setRequestHeader('X-CSRFToken', csrfcookie());
+    //req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    //req.setRequestHeader('X-CSRFToken', csrfcookie());
     //req.onload = callback;
     req.send(); 
 }
@@ -23,10 +23,10 @@ function handleResponse() {
     }
 
     // Removes the old to-do list items
-    var list = document.getElementById("devices");
-    while (list.hasChildNodes()) {
-        list.removeChild(list.firstChild);
-    }
+    //var list = document.getElementById("devices");
+    //while (list.hasChildNodes()) {
+    //    list.removeChild(list.firstChild);
+    //}
 
     // Parses the response to get a list of JavaScript objects for 
     // the items.
@@ -34,11 +34,31 @@ function handleResponse() {
     var row = document.createElement("row");
     //row.innerHTML = devices[0]["fields"]["deviceName"];
     // Adds each new devices item to the list
+    $("h6").css("font-style", "italic"); // Not permanent, just syntax for jquery
     var string = "";
-
+    //var string = "card"+devices[i]["fields"]["trained"];
+    
+    // Ajax request to update card color. NOT CORRECT, Look at syntax though
     for (var i = 0; i < devices.length; ++i) {
-      string = "";
+      string = "card_"+devices[i]["fields"]["deviceName"];
+      if (devices[i]["fields"]["deviceState"] == 'ON'){
+        $(string).className("card small blue");
+      }
+    }
 
+    
+
+}
+    /*
+  
+
+  #################
+  ## All of this is Junk
+  #################
+      string = "";
+      if (devices[i]["fields"]["trained"] == 0) {
+          string += "<div class=\"card small grey\">";
+        }
       string += "<div class=\"col s3\">";
       if (devices[i]["fields"]["trained"] == 0) {
           string += "<div class=\"card small grey\">";
@@ -94,10 +114,10 @@ function handleResponse() {
         string += "name=\"action\">Train Now! </a> {% csrf_token %} </form>";
         string += "</div>";
       }
-      */
+      
       string += "</div></div>";
       row.innerHTML += string;
-    }
+    }/*
     list.appendChild(row);
    
 
@@ -130,6 +150,6 @@ var csrfcookie = function() {
     }
     return cookieValue;
 };
-
+*/
 // causes the sendRequest function to run every 10 seconds
-window.setInterval(sendRequest, 100000);
+window.setInterval(sendRequest, 100);
