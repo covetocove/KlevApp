@@ -14,6 +14,7 @@ urlpatterns = patterns('',
 	url(r'^trainOn/$', 'KlevApp.views.TrainOn', name='trainOn'),
 	url(r'^finishOn/$', 'KlevApp.views.FinishOn', name='finishOn'),
 	url(r'^trainingFinished/$', 'KlevApp.views.TrainingFinished', name='trainingFinished'),
+	url(r'^get-devices/$', 'KlevApp.views.Get_Devices', name='getDevices'),
 )
 
 

@@ -16,26 +16,43 @@
  
 <a href="{%url 'index' %}">Return home</a>
 <br><br>
-<div class = "row">
+<div class = "row" id = "devices">
   {% for device in devices %}
     <div class="col s3">
       {% if device.trained == 0%}
-      <div class="card grey">
+      <div class="card small grey" id= "card_{{device.deviceName}}">
       {%else %}
       {% if device.deviceState == 'ON'%}
-      <div class="card green">
+      <div class="card small green" id= "card_{{device.deviceName}}">
       {% elif device.deviceState == 'OFF' %}
-      <div class="card blue">
+      <div class="card small red" id= "card_{{device.deviceName}}">
       {% else %}
-      <div class="card red">
+      <div class="card small yellow" id= "card_{{device.deviceName}}">
         {% endif %}
       {%endif%}
-
+        
         <div class="card-content">
-          <h1 class="center-align"> {{device.deviceName}}</h1>
-          <h6 class="center-align"> Make: {{device.make}} </h6>
-          <h6 class="center-align"> Model: {{device.modelNum}} </h6>
-          <h6 class="center-align"> Location: {{device.location}} </h6>
+          <span class="card-title activator white-text text-darken-4">{{device.deviceName}} <i class="mdi-navigation-more-vert right"></i></span>
+          <p><a href="#">Visualize</a></p>
+        </div>
+        {% if device.trained == 0%}
+          <div class = "center-align"> 
+            <form action="{%url 'trainDevice' %}" method="post">
+              <input type="hidden" name="Device" value="{{device.deviceName}}">
+              <button class="waves-effect waves-light btn" type="submit" name="action">Train Now! </button>
+              {% csrf_token %}
+
+            </form>
+          </div>
+        {% endif %}
+
+        <div class="card-reveal">
+          <span class="card-title grey-text text-darken-4">{{device.deviceName}} <i class="mdi-navigation-close right"></i></span> 
+
+          <br> <br>         
+          <h6 class="center-align" id = "{{device.make}}_Make"> Make: {{device.make}} </h6>
+          <h6 class="center-align" id = "{{device.modelNum}}_modelNum"> Model: {{device.modelNum}} </h6>
+          <h6 class="center-align" id = "{{device.location}}_location"> Location: {{device.location}} </h6>
           {% if device.trained == 1%}
           <h6 class="center-align"> Device is Trained </h6>
           <h6 class="center-align"> State: {{device.deviceState}} </h6>
@@ -64,7 +81,7 @@
     <div class="container">
       <div class="row">
         <div class="col l6 s12">
-          <h5 class="white-text">Company Bio</h5>
+          <h5 class="white-text">Klev: the smart sensor</h5>
           <p class="grey-text text-lighten-4">In development</p>
 
 
@@ -72,26 +89,26 @@
         <div class="col l3 s12">
           <h5 class="white-text">Settings</h5>
           <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
           </ul>
         </div>
         <div class="col l3 s12">
           <h5 class="white-text">Connect</h5>
           <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="footer-copyright">
       <div class="container">
-      Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+      Made by <a class="orange-text text-lighten-3" href="https://www.linkedin.com/in/ppacent">Team Klev</a>
       </div>
     </div>
   </footer>
@@ -101,6 +118,7 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="/static/materialize/js/materialize.js"></script>
   <script src="/static/materialize/js/init.js"></script>
+  <script src="/static/js/ajax.js"> </script>
 {% endblock %}
 
 

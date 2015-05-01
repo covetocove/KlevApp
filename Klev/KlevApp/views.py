@@ -134,6 +134,11 @@ def TrainingFinished(request):
 	device.save()
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
 
+def Get_Devices(request):
+    response_text = serializers.serialize("json", Device.objects.all())
+    print("JSON Response = ", response_text)
+    print("HEEEEEEEEEEEEE\nEeeeeeeeen\neeeeeeellll\nlllllllooo\noooooooooooooooo")
 
+    return HttpResponse(response_text, content_type="application/json")
 
 
