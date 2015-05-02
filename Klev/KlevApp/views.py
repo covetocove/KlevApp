@@ -288,8 +288,6 @@ def TrainingFinished(request):
 
 def Get_Devices(request):
     response_text = serializers.serialize("json", Device.objects.all())
-    print("JSON Response = ", response_text)
-    print("HEEEEEEEEEEEEE\nEeeeeeeeen\neeeeeeellll\nlllllllooo\noooooooooooooooo")
 
     return HttpResponse(response_text, content_type="application/json")
 
