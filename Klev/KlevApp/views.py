@@ -97,6 +97,7 @@ def DeviceAdded(request):
 # View Functions for Training
 ########
 def is_valid_ack(tid, ack):
+        return True
         if (ack == None):
                 return False
         line = ack.split(DELIMITER_SEQ)
@@ -109,6 +110,7 @@ def is_valid_ack(tid, ack):
                 return False
 
 def is_valid_data_line(tid, data):
+        return True
         if (data == None):
                 return False
         line = data.split(DELIMITER_SEQ)
@@ -134,8 +136,6 @@ def send_data_req(rid):
         serial_do(False, message)
 def get_data_line(rid):
         return serial_do(True)
-def is_valid_data_line(data):
-        return True
 def get_device_data(nodeid, is_on, rid = [1]):
         data_file_name = get_data_file_name(nodeid)
         if (is_on):
@@ -152,13 +152,15 @@ def get_device_data(nodeid, is_on, rid = [1]):
                         dev_data = get_data_line(this_rid)
 
                         print dev_data
-                        if (not is_valid_data_line(dev_data)):
+                        if (not is_valid_data_line(this_rid, dev_data)):
                                 dev_data = None
 
+                dev_data = "#1|0.1 -0.5 0.65 0.12 -0.53\r\n"
                 floats = dev_data.split(DELIMITER_SEQ)[1]
                 #DJBDJB REMOVE THIS REMOVE THIS
                 #dev_data = "0.1 -0.5 0.65 0.12 -0.53\r\n"
                 #DJBDJB REMOVE ABOVE THIS REMOVE
+                print "floats"
 
                 to_write = convert_line_to_libsvm_example(is_on, floats)
                 data_file.write(to_write)
@@ -177,7 +179,7 @@ def send_line(rid, message):
                 # resp = get_ack(rid) that reads a serial line and
                 resp = serial_do(True)
                 # ensures the ack # matches rid
-                if (is_valid_ack(resp)):
+                if (is_valid_ack(rid, resp)):
                         return
 def send_tc_model_req(rid):
         message = SENDING_TWO_CLASS_MODEL + str(rid) + "\r\n\0"

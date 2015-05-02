@@ -24,6 +24,8 @@ def serial_do(is_read, message=None, ser=[]):
             ret = serial_read(s)
         else:
             serial_write(s, message)
+    except:
+        print "exception :(\n"
     finally:
         sem.release()
     return ret
