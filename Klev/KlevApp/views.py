@@ -59,7 +59,10 @@ def DeviceAdded(request):
 	newDevice.save()
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
 
-
+# Handling request for Home Page
+def Visualize(request):
+	context = {}
+	return render(request, 'index.html', context)
 
 ########
 # View Functions for Training
