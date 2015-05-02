@@ -17,6 +17,8 @@ from KlevApp.forms import *
 from KlevApp.ml.app_train_interface import *
 from KlevApp.ml.train import *
 
+from KlevApp.serial_helper import *
+
 import json
 import requests
 import time
@@ -39,8 +41,11 @@ SENDING_TWO_CLASS_MODEL = "SENDING_TWO_CLASS_MODEL"
 SENDING_SCALING_PARAMS = "SENDING_SCALING_PARAMS"
 SENDING_ONE_CLASS_MODEL = "SENDING_ONE_CLASS_MODEL"
 
+
 REQ_DATA_SUFFIX = "GET_DATA\r\n\0"
 REQ_DATA_PREFIX = "#"
+DELIMITER_SEQ = "|"
+ACK = "ACK"
 REQ_DATA_ITERS = 40
 
 # Handling request for Home Page
@@ -91,14 +96,46 @@ def DeviceAdded(request):
 ########
 # View Functions for Training
 ########
+def is_valid_ack(tid, ack):
+        if (ack == None):
+                return False
+        line = ack.split(DELIMITER_SEQ)
+        if (len(line) < 2 or len(line[0]) < 2 or
+            line[0][0] != "#" or ACK not in line[1]):
+                return False
+        try:
+                return tid == int(line[0][1:])
+        except:
+                return False
+
+def is_valid_data_line(tid, data):
+        if (data == None):
+                return False
+        line = data.split(DELIMITER_SEQ)
+        if (len(line) != 2 or len(line[0]) < 2 or
+            line[0][0] != "#"):
+                return False
+        try:
+                t_id = int(line[0][1:])
+        except:
+                return False
+        if (t_id != tid):
+                return False
+        for c in line[1]:
+                if c not in " .0123456789":
+                        return False
+        return True
 """
 These functions are used to request and collect data lines from the node
 """
 def send_data_req(rid):
-        message = REQ_DATA_PREFIX + str(rid) + REQ_DATA_SUFFIX
-        return
+        message = REQ_DATA_PREFIX + str(rid) + DELIMITER_SEQ + \
+            REQ_DATA_SUFFIX
+        serial_do(False, message)
 def get_data_line(rid):
-        return "0.0 0.5 -0.3 0.76"
+        return serial_do(True)
+def is_valid_data_line(data):
+        return True
 def get_device_data(nodeid, is_on, rid = [1]):
         data_file_name = get_data_file_name(nodeid)
         if (is_on):
@@ -112,10 +149,18 @@ def get_device_data(nodeid, is_on, rid = [1]):
                 dev_data = None
                 while (dev_data == None):
                         send_data_req(this_rid)
-                        time.sleep(0.1)
                         dev_data = get_data_line(this_rid)
-                to_write = convert_line_to_libsvm_example(is_on, dev_data)
-                to_write = to_write + "\n"
+
+                        print dev_data
+                        if (not is_valid_data_line(dev_data)):
+                                dev_data = None
+
+                floats = dev_data.split(DELIMITER_SEQ)[1]
+                #DJBDJB REMOVE THIS REMOVE THIS
+                #dev_data = "0.1 -0.5 0.65 0.12 -0.53\r\n"
+                #DJBDJB REMOVE ABOVE THIS REMOVE
+
+                to_write = convert_line_to_libsvm_example(is_on, floats)
                 data_file.write(to_write)
         data_file.close()
 def generate_model_files(nodeid):
@@ -127,12 +172,12 @@ These functions are used to send models back to the node
 def send_line(rid, message):
         while True:
                 # send line over serial here
-                time.sleep(0.1)
+                serial_do(False, message)
                 # this should be something like
                 # resp = get_ack(rid) that reads a serial line and
+                resp = serial_do(True)
                 # ensures the ack # matches rid
-                resp = True
-                if (resp):
+                if (is_valid_ack(resp)):
                         return
 def send_tc_model_req(rid):
         message = SENDING_TWO_CLASS_MODEL + str(rid) + "\r\n\0"

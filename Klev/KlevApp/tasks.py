@@ -2,6 +2,9 @@
 # Make sure to have django-background-task 0.1.8 installed
 # In order to have tasks run, run "python manage.py process_tasks"
 from background_task import background
+
+from KlevApp.serial_helper import *
+
 import random
 import models
 import time
@@ -14,7 +17,7 @@ START_CHAR = "#" #used to mark start of message. Can appear multiple times at st
 MESSAGE_NUM_END_CHAR = "|"
 DATA_DIR_PATH = ""
 GET_STATE_STR = "GET_STATE"
-DELIMITER_SEQ = "---"
+DELIMITER_SEQ = "|"
 
 # For all messages the Hub will send them until it gets
 # a message back from the node with a matching transaction number
@@ -37,48 +40,50 @@ DELIMITER_SEQ = "---"
 
 ACK = "ACK"
 
+def send_serial_state_ack(tid):
+        message = "#" + str(tid) + DELIMITER_SEQ + ACK
+        serial_do(False, message)
+
+def send_serial_state_req(rid):
+        message = "#" + str(rid) + DELIMITER_SEQ + GET_STATE_STR
+        serial_do(False, message)
+
 def start_listen_for_updates(deviceName, nodeid):
 	print "Starting to listen for updates to {0}".format(deviceName)
 	listen_for_updates(deviceName, nodeid)
 
-class serial_message(object):
-	def __init__(self, tid, nid, state):
-		"""transmission id, node id, node state"""
-		self.tid = tid
-		self.nid = nid
-		self.state = state
+def get_serial_state_line(tid):
+	# #TRANSMISSIONID|STATE
+        line = serial_do(True)
+        if (line == None):
+                return None
 
-def get_serial_state_line(tid = [1]):
-	# TRANSMISSION_ID - NODE_ID - STATE
-	# janky way to increment the transmission id each time
-	this_tid = tid[0]
-	tid[0] += 1
+        line = line.split(DELIMITER_SEQ)
 
-	print "tid = " + str(tid[0])
+        # expecting #tid|state
+        if len(line) != 2:
+                return None
+        if len(line[0]) < 2 or line[0][0] != "#":
+                return None
+        try:
+                return_id = int(line[0][1:])
+        except:
+                return None
+        if (return_id != tid):
+                if (return_id < tid):
+                        send_serial_state_ack(return_id)
+                return None
 
-	rand_val = random.random()
-	new_state = None
-	if rand_val < 0.1:
-		new_state = ABN_STATE_STR
-	elif rand_val < 0.55:
-		new_state = ON_STATE_STR
-	else:
-		new_state = OFF_STATE_STR
-
-	print "new_state = " + new_state
-
-	return serial_message(this_tid, 1, new_state)
-
-def send_serial_state_ack(tid):
-        message = ACK + str(tid) + "\r\n"
-	return
-
-def send_serial_state_req(rid, nid):
-	message = GET_STATE_STR + str(rid) + DELIMITER_SEQ + str(nid) + "\r\n"
-	return
+        if (ON_STATE_STR in line[1]):
+                return ON_STATE_STR
+        if (OFF_STATE_STR in line[1]):
+                return OFF_STATE_STR
+        if (ABN_STATE_STR in line[1]):
+                return ABN_STATE_STR
+        return None
 
 # requests an update on the state of node_id node
-def update_data(node_id, cur_req_id = [1], tids_processed = set()):
+def update_data(node_id, cur_req_id = [1]):
 	print "in update_data\n"
 
 	# janky way to increment the request id each time
@@ -89,33 +94,21 @@ def update_data(node_id, cur_req_id = [1], tids_processed = set()):
 	serial_input = None
 	while (serial_input == None):
 		print "looping on serial input"
-		send_serial_state_req(this_req_id, node_id)
-		time.sleep(0.25)
-		serial_input = get_serial_state_line()
-		if (serial_input == None):
-			continue
-		if (serial_input.tid in tids_processed):
-			print "Repeated message"
-			send_serial_state_ack(serial_input.tid)
-			serial_input = None
-		elif (serial_input.nid != node_id):
-			print "Different node id received"
-			serial_input = None
-
-	tids_processed.add(serial_input.tid)
+		send_serial_state_req(this_req_id)
+		serial_input = get_serial_state_line(this_req_id)
 
 	file_path = DATA_DIR_PATH + str(node_id)
 
 	timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-	file_line = str(serial_input.nid) + DELIMITER_SEQ + timestamp + \
-				DELIMITER_SEQ + str(serial_input.state) + "\n"
+	file_line = str(node_id) + DELIMITER_SEQ + timestamp + \
+				DELIMITER_SEQ + str(serial_input) + "\n"
 
 	with open(file_path, "a") as f:
 		f.write(file_line)
 
-	send_serial_state_ack(serial_input.tid)
+	send_serial_state_ack(this_req_id)
 
-	return serial_input.state
+	return serial_input
 
 @background(schedule=10) #start 20 seconds from now
 def listen_for_updates(deviceName, nodeid):
@@ -145,9 +138,3 @@ def listen_for_updates(deviceName, nodeid):
 
 	# This needs to call itself to schedule itself again
 	listen_for_updates(deviceName, nodeid)
-
-
-
-@background(schedule=1)
-def test_task():
-	print "----Hello from test_task()----"
