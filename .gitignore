@@ -2,3 +2,5 @@
 **pyc
 **.sqlite3
 [0-9]
+.emacs*
+data_*

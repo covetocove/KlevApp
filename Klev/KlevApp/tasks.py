@@ -16,23 +16,6 @@ DATA_DIR_PATH = ""
 GET_STATE_STR = "GET_STATE"
 DELIMITER_SEQ = "---"
 
-# When training, the node expects the two-class model string,
-# then the scaling parameters,
-# then the 1-class model to be sent
-# The end of each of those should be marked by an empty line (with \r),
-# i.e. the last 4 characters sent should be \r\n\r\n
-# Transaction should look like
-# send "SENDING_MODEL\r\n"
-# send two-class model string
-# send "\r\n"
-# send scaling-info
-# send "\r\n"
-# send one-class model string
-# send "\r\n"
-SENDING_TWO_CLASS_MODEL = "SENDING_TWO_CLASS_MODEL"
-SENDING_SCALING_PARAMS = "SENDING_SCALING_PARAMS"
-SENDING_ONE_CLASS_MODEL = "SENDING_ONE_CLASS_MODEL"
-
 # For all messages the Hub will send them until it gets
 # a message back from the node with a matching transaction number
 # The node will send messages until it gets a message from the Hub
@@ -87,6 +70,7 @@ def get_serial_state_line(tid = [1]):
 	return serial_message(this_tid, 1, new_state)
 
 def send_serial_state_ack(tid):
+        message = ACK + str(tid) + "\r\n"
 	return
 
 def send_serial_state_req(rid, nid):
