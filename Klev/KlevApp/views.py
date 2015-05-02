@@ -53,8 +53,6 @@ def DeviceAdded(request):
 	newDevice.save()
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
 
-
-
 ########
 # View Functions for Training
 ########
