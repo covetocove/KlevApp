@@ -16,5 +16,3 @@ urlpatterns = patterns('',
 	url(r'^trainingFinished/$', 'KlevApp.views.TrainingFinished', name='trainingFinished'),
 )
 
-
-
