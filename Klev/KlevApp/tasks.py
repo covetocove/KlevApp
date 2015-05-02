@@ -148,7 +148,14 @@ def listen_for_updates(deviceName, nodeid):
 		print "ERROR: Invalid state received!\n"
 		new_state = models.ABNORMAL_STATE
 
-	device = models.Device.objects.get(nodeid = nodeid, deviceName = deviceName)
+	device = models.Device.objects.get(nodeid = nodeid,
+                                           deviceName = deviceName)
+
+
+        print device.deviceName + ": nodeid=" + str(device.nodeid) + \
+            ";Old device state: " + str(device.deviceState)
+
+
 	device.deviceState = new_state
 	device.save()
 
