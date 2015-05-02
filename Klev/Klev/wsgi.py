@@ -18,9 +18,11 @@ def setup_tasks():
 	print "setup_tasks!!!!"
 	from KlevApp.models import Device
 	from KlevApp.tasks import start_listen_for_updates
+        import serial
+
 	devices = Device.objects.all()
 	print "---Setting up for {0} devices---".format(len(devices))
 	for device in devices:
 		start_listen_for_updates(device.deviceName, device.nodeid)
-		
+
 setup_tasks()
