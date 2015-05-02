@@ -18,7 +18,7 @@
 <br><br>
 <div class = "row" id = "devices">
   {% for device in devices %}
-    <div class="col s3">
+    <div class="col s6 l3">
       {% if device.trained == 0%}
       <div class="card small grey" id= "card_{{device.deviceName}}">
       {%else %}
@@ -51,13 +51,13 @@
           <span class="card-title grey-text text-darken-4">{{device.deviceName}} <i class="mdi-navigation-close right"></i></span> 
 
           <br> <br>
-          <h6 class="center-align" id = "{{device.make}}_Make"> Make: {{device.make}} </h6>
-          <h6 class="center-align" id = "{{device.modelNum}}_modelNum"> Model: {{device.modelNum}} </h6>
-          <h6 class="center-align" id = "{{device.location}}_location"> Location: {{device.location}} </h6>
-          <h6 class="center-align" id = "{{device.nodeid}}_nodeid>"> Node ID: {{device.nodeid}} </h6>
+          <h6 class="center-align" id = "{{device.deviceName}}_Make"> Make: {{device.make}} </h6>
+          <h6 class="center-align" id = "{{device.deviceName}}_modelNum"> Model: {{device.modelNum}} </h6>
+          <h6 class="center-align" id = "{{device.deviceName}}_location"> Location: {{device.location}} </h6>
+          <h6 class="center-align" id = "{{device.deviceName}}_nodeid"> Node ID: {{device.nodeid}} </h6>
           {% if device.trained == 1%}
           <h6 class="center-align"> Device is Trained </h6>
-          <h6 class="center-align"> State: {{device.deviceState}} </h6>
+          <h6 class="center-align" id = "{{device.deviceName}}_deviceState"> State: {{device.deviceState}} </h6>
 
           </div>
           {%else %}
