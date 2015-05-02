@@ -18,5 +18,3 @@ urlpatterns = patterns('',
 	url(r'^get-devices/$', 'KlevApp.views.Get_Devices', name='getDevices'),
 )
 
-
-
