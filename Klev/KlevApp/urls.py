@@ -3,6 +3,7 @@ from django.db import models
 from tasks import start_listen_for_updates
 
 
+# Sets up the urls for the various pages in the webapp
 urlpatterns = patterns('',
     url(r'^$', 'KlevApp.views.Index', name='index'),
     url(r'^addDevice/', 'KlevApp.views.AddDevice', name='addDevice'),
@@ -14,5 +15,6 @@ urlpatterns = patterns('',
 	url(r'^trainOn/$', 'KlevApp.views.TrainOn', name='trainOn'),
 	url(r'^finishOn/$', 'KlevApp.views.FinishOn', name='finishOn'),
 	url(r'^trainingFinished/$', 'KlevApp.views.TrainingFinished', name='trainingFinished'),
+	url(r'^get-devices/$', 'KlevApp.views.Get_Devices', name='getDevices'),
 )
 

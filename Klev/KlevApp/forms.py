@@ -9,5 +9,5 @@ from models import *
 class AddDeviceForm(forms.ModelForm):
     class Meta:
         model = Device
-        exclude = ('trained', 'deviceState',)
+        exclude = ('trained', 'deviceState', 'deviceid',)
         widgets = {'photo' : forms.FileInput(), }
