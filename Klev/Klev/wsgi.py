@@ -15,6 +15,7 @@ application = get_wsgi_application()
 
 #This is a bit of a hack to get this to run once on startup
 def setup_tasks():
+	print "setup_tasks!!!!"
 	from KlevApp.models import Device
 	from KlevApp.tasks import start_listen_for_updates
 	devices = Device.objects.all()

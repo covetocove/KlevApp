@@ -6,14 +6,11 @@ import random
 import models
 import time
 
-DELIMITER_SEQ = "---"
-DATA_DIR_PATH = ""
 ON_STATE_STR = "STATE_ON"
 OFF_STATE_STR = "STATE_OFF"
 ABN_STATE_STR = "STATE_ABNORMAL"
-
-tids_processed = set()
-cur_req_id = 1
+DELIMITER_SEQ = "---"
+DATA_DIR_PATH = ""
 
 def start_listen_for_updates(deviceName, nodeid):
 	print "Starting to listen for updates to {0}".format(deviceName)
@@ -26,9 +23,26 @@ class serial_message(object):
 		self.nid = nid
 		self.state = state
 
-def get_serial_line():
+def get_serial_line(tid = [1]):
 	# TRANSMISSION_ID - NODE_ID - STATE
-	return serial_message(1, 1, ON_STATE_STR)
+	# janky way to increment the transmission id each time
+	this_tid = tid[0]
+	tid[0] += 1
+
+	print "tid = " + str(tid[0])
+
+	rand_val = random.random()
+	new_state = None
+	if rand_val < 0.1:
+		new_state = ABN_STATE_STR
+	elif rand_val < 0.55:
+		new_state = ON_STATE_STR
+	else:
+		new_state = OFF_STATE_STR
+
+	print "new_state = " + new_state
+
+	return serial_message(this_tid, 1, new_state)
 	
 def send_serial_ack(tid):
 	return
@@ -38,11 +52,17 @@ def send_serial_req(rid, nid):
 	return
 
 # requests an update on the state of node_id node
-def update_data(node_id):
-	this_req_id = cur_req_id
-	cur_req_id += 1
+def update_data(node_id, cur_req_id = [1], tids_processed = set()):
+	print "in update_data\n"
 
+	# janky way to increment the request id each time
+	this_req_id = cur_req_id[0]
+	cur_req_id[0] += 1
+	print "this_req_id = " + str(this_req_id)
+
+	serial_input = None
 	while (serial_input == None):
+		print "looping on serial input"
 		send_serial_req(this_req_id, node_id)
 		time.sleep(0.25)
 		serial_input = get_serial_line()
@@ -58,7 +78,7 @@ def update_data(node_id):
 
 	tids_processed.add(serial_input.tid)
 
-	file_path = DATA_DIR_PATH + str(serial_input.tid)
+	file_path = DATA_DIR_PATH + str(node_id)
 		
 	timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
 	file_line = str(serial_input.nid) + DELIMITER_SEQ + timestamp + \
@@ -86,32 +106,15 @@ def listen_for_updates(deviceName, nodeid):
 		print "ERROR: Invalid state received!\n"
 		new_state = models.ABNORMAL_STATE
 
-	"""
-	#TODO replace this with something that talks to the node
-	rand_val = random.random()
-	new_state = None
-	if rand_val < 0.1:
-		new_state = models.ABNORMAL_STATE
-	elif rand_val < 0.55:
-		new_state = models.ON_STATE
-	else:
-		new_state = models.OFF_STATE
-
-	print "{0} is now in the {1} state".format(deviceName, new_state)
-	"""
-
-	device = models.Device.objects.get(nodeid = nodeid)
+	device = models.Device.objects.get(nodeid = nodeid, deviceName = deviceName)
 	device.deviceState = new_state
 	device.save()
 
-
 	# This needs to call itself to schedule itself again
-	listen_for_updates(deviceName)
+	listen_for_updates(deviceName, nodeid)
 
 	
 
 @background(schedule=1)
 def test_task():
 	print "----Hello from test_task()----"
-
-test_task()
