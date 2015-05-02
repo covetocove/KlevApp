@@ -20,6 +20,6 @@ def setup_tasks():
 	devices = Device.objects.all()
 	print "---Setting up for {0} devices---".format(len(devices))
 	for device in devices:
-		start_listen_for_updates(device.deviceName)
+		start_listen_for_updates(device.deviceName, device.nodeid)
 		
 setup_tasks()

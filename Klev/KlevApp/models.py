@@ -14,12 +14,13 @@ class Device(models.Model):
 	location = models.CharField(max_length = 80)
 	deviceState = models.CharField(max_length = 20)
 	trained = models.IntegerField(default = 0);
+	nodeid = models.IntegerField(default = -1);
 	photo = models.ImageField(upload_to="deviceImages", null=True, blank=True, default = None)
 
 def extra_device_setup(sender, instance, created, *args, **kwargs):
 	if created:
 		print "---Performing extra setup for new device---"
-		tasks.start_listen_for_updates(instance.deviceName)
+		tasks.start_listen_for_updates(instance.deviceName, instance.nodeid)
 
 from django.db.models.signals import post_save
 post_save.connect(extra_device_setup, sender=Device)

@@ -44,10 +44,14 @@ def Devices(request):
 
 def DeviceAdded(request):
 	print(request)
-	newDevice = Device(deviceName = request.POST.get('deviceName'),
-	make = request.POST.get('make'), modelNum = request.POST.get('modelNum'),
-	location = request.POST.get('location'), deviceState = "Untrained",
-	photo = request.POST.get('photo'),)
+	newDevice = Device(
+		deviceName = request.POST.get('deviceName'),
+		make = request.POST.get('make'), 
+		modelNum = request.POST.get('modelNum'),
+		location = request.POST.get('location'), 
+		deviceState = "Untrained",
+		nodeid = request.POST.get('nodeid'),
+		photo = request.POST.get('photo'),)
 	newDevice.save()
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
 
@@ -60,7 +64,7 @@ def TrainDevice(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName = request.POST.get('Device'))
 	print(device)
 	context = {}
 	return render(request, 'trainDevice.html', {'device':device})
@@ -136,8 +140,8 @@ def TrainingFinished(request):
 
 def Get_Devices(request):
     response_text = serializers.serialize("json", Device.objects.all())
-    print("JSON Response = ", response_text)
-    print("HEEEEEEEEEEEEE\nEeeeeeeeen\neeeeeeellll\nlllllllooo\noooooooooooooooo")
+    #print("JSON Response = ", response_text)
+    #print("HEEEEEEEEEEEEE\nEeeeeeeeen\neeeeeeellll\nlllllllooo\noooooooooooooooo")
 
     return HttpResponse(response_text, content_type="application/json")
 

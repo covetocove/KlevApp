@@ -39,6 +39,7 @@
           <div class = "center-align"> 
             <form action="{%url 'trainDevice' %}" method="post">
               <input type="hidden" name="Device" value="{{device.deviceName}}">
+              <input type="hidden" name="nodeid" value="{{device.nodeid}}">
               <button class="waves-effect waves-light btn" type="submit" name="action">Train Now! </button>
               {% csrf_token %}
 
@@ -49,10 +50,11 @@
         <div class="card-reveal">
           <span class="card-title grey-text text-darken-4">{{device.deviceName}} <i class="mdi-navigation-close right"></i></span> 
 
-          <br> <br>         
+          <br> <br>
           <h6 class="center-align" id = "{{device.make}}_Make"> Make: {{device.make}} </h6>
           <h6 class="center-align" id = "{{device.modelNum}}_modelNum"> Model: {{device.modelNum}} </h6>
           <h6 class="center-align" id = "{{device.location}}_location"> Location: {{device.location}} </h6>
+          <h6 class="center-align" id = "{{device.nodeid}}_nodeid>"> Node ID: {{device.nodeid}} </h6>
           {% if device.trained == 1%}
           <h6 class="center-align"> Device is Trained </h6>
           <h6 class="center-align"> State: {{device.deviceState}} </h6>
