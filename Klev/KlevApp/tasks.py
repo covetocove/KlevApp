@@ -96,6 +96,7 @@ def update_data(node_id, cur_req_id = [1]):
 		print "looping on serial input"
 		send_serial_state_req(this_req_id)
 		serial_input = get_serial_state_line(this_req_id)
+                time.sleep(1)
 
 	file_path = DATA_DIR_PATH + str(node_id)
 

@@ -5,6 +5,7 @@ import threading
 SERIAL_PATH = "/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_75230313833351314221-if00"
 
 def serial_do(is_read, message=None, ser=[]):
+    return "#1|STATE_OFF"
     if (len(ser) == 0):
         s = serial.Serial(SERIAL_PATH, 9600, timeout=1,
                             writeTimeout=1)
