@@ -22,6 +22,8 @@ from KlevApp.serial_helper import *
 import json
 import requests
 import time
+import os
+
 # Create your views here.
 
 # When training, the node expects the two-class model string,
@@ -102,10 +104,16 @@ def Visualize(request):
     print("trained")
 
     print(getattr(device, 'trained'))
-    #context = {}
-    #f = open('/KlevApp/Klev/1.txt', 'r')
-    #contents = f.read()
-    #print(f)
+    context = {}
+    dir = os.path.dirname(__file__)
+    print(dir)
+    filename = dir + '/../1'
+    print(filename)
+
+    f = open(filename, 'r')
+    contents = f.read()
+    print(contents.split('-'))
+    #print(contents)
     return render(request, 'devicePage.html', {'device':device})
 
 ########

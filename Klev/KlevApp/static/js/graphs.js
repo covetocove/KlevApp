@@ -1,6 +1,6 @@
 // Get the context of the canvas element we want to select
 $( document ).ready(function() {
-	$("h6").css("font-style", "italic");
+	//$("h6").css("font-style", "italic");
 	myObject = {}; //myObject[numberline] = "textEachLine";
   $.get('/KlevApp/Klev/1.txt', function(myContentFile) {
      var lines = myContentFile.split("\r\n");
