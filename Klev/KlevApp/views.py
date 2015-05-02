@@ -88,8 +88,17 @@ def DeviceAdded(request):
 
 # Handling request for Home Page
 def Visualize(request):
-	context = {}
-	return render(request, 'index.html', context)
+    print("Tryna Visualize, breh?")
+    device = Device.objects.all().get(deviceName= request.POST.get('Device'))
+    print(getattr(device, 'deviceName'))
+    print("state")
+
+    print(getattr(device, 'deviceState'))
+    print("trained")
+
+    print(getattr(device, 'trained'))
+    context = {}
+    return render(request, 'devicePage.html', {'device':device})
 
 ########
 # View Functions for Training

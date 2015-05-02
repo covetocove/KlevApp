@@ -39,8 +39,18 @@
         
         <div class="card-content">
           <span class="card-title activator white-text text-darken-4">{{device.deviceName}} <i class="mdi-navigation-more-vert right"></i></span>
-          <p><a href="{%url 'visualize' %}">Visualize</a></p>
         </div>
+      <div class = "center-align"> 
+
+        <form action="{%url 'visualize' %}" method="post">
+          <input type="hidden" name="Device" value="{{device.deviceName}}">
+          <input type="hidden" name="nodeid" value="{{device.nodeid}}">
+          <button class="waves-effect waves-light btn" type="submit" name="action">Visualize </button>              
+          {% csrf_token %}
+
+        </form>
+      </div>
+
         {% if device.trained == 0%}
           <div class = "center-align"> 
             <form action="{%url 'trainDevice' %}" method="post">
@@ -51,6 +61,18 @@
 
             </form>
           </div>
+
+          {% else %}
+          <div class = "center-align"> 
+
+           <form action="{%url 'visualize' %}" method="post">
+              <input type="hidden" name="Device" value="{{device.deviceName}}">
+              <input type="hidden" name="nodeid" value="{{device.nodeid}}">
+              <button class="waves-effect waves-light btn" type="submit" name="action">Visualize </button>              
+              {% csrf_token %}
+
+            </form>
+          </div>d
         {% endif %}
 
         <div class="card-reveal">
