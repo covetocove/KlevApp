@@ -1,16 +1,127 @@
- <!DOCTYPE html>
-  <html>
-    <head>
-      <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="../static/materialize/css/materialize.min.css"  media="screen,projection"/>
+{% extends "navBar.html" %}
+{% load static %}
+{%block head%} 
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>{% block title %}{% endblock %}</title>
 
-      <!--Let browser know website is optimized for mobile-->
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    </head>
+  <!-- CSS  -->
+  <link href="{% static 'materialize/css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="../static/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+{% endblock %}
 
-    <body>
-      <!--Import jQuery before materialize.js-->
-      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-      <script type="text/javascript" src="../static/materialize/js/materialize.min.js"></script>
-    </body>
-  </html>
+
+{%block page %}
+ 
+
+
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center orange-text">Klev</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">Trainable Device Sensing Made Easy</h5>
+      </div>
+      <div class="row center">
+        <a href="{% url 'addDevice' %}" id="download-button" class="btn-large waves-effect waves-light orange">Add a Device</a>
+      </div>
+      <br><br>
+
+    </div>
+  </div>
+  
+
+
+
+  <div class="container">
+    <div class="section">
+
+      <!--   Icon Section   -->
+      <div class="row">
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="mdi-social-group"></i></h2>
+            <h5 class="center">About</h5>
+ 
+            <p class="light"> Team Klev is based in Pittsburgh, PA. We're one of many teams developing innovative embedded systems on behalf of Carnegie Mellon University's senior Electrical & Computer Engineering capstone course: 18-549: Embedded System Design taught by <a href="http://users.ece.cmu.edu/~agr/"> Dr. Anthony Rowe </a>.  </p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="mdi-image-filter-drama"></i></h2>
+            <h5 class="center">Concept</h5>
+
+            <p class="light"> Klev is a sensor array that you can teach to monitor any of your devices. The sensor network uses machine learning algorithms to learn to monitor the state of a widerange of common devices and objects. Klev can then use this data to send people and systems useful insights and information about their devices. </p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="mdi-image-flash-on"></i></h2>
+            <h5 class="center">Motivation</h5>
+
+            <p class="light">As the idea of a "Smart Home" becomes a reality, easy-to-use sensor arrays will allow homeowners to better customize their homes. Currently, sensor arrays require pre-defined rules to effectively monitor device state. Users will be able to train Klev to monitor device states the need for programmatic skills.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+    <br><br>
+
+    <div class="section">
+
+    </div>
+  </div>
+
+  <footer class="page-footer orange">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Klev: The Smart Sensor</h5>
+          <p class="grey-text text-lighten-4">In development</p>
+
+
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Settings</h5>
+          <ul>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+          </ul>
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Connect</h5>
+          <ul>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+            <li><a class="white-text" href="#!"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Made by <a class="orange-text text-lighten-3" href="https://www.linkedin.com/in/ppacent">Team Klev</a>
+      </div>
+    </div>
+  </footer>
+{%endblock %}
+
+{% block script %} 
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="../static/materialize/js/materialize.js"></script>
+  <script src="../static/materialize/js/init.js"></script>
+  {% endblock %}
+
+
+
+

@@ -21,37 +21,45 @@ import json
 import requests
 # Create your views here.
 
-
+# Handling request for Home Page
 def Index(request):
 	context = {}
 	return render(request, 'index.html', context)
-
+# Handles request for initial call to add a device 
+# This is just the first page of the wizard, other pages are below
 def AddDevice(request):
 	context = {}
 	context['AddDeviceForm'] = AddDeviceForm()
 	return render(request, 'addDevice.html', context)
 
+# Devices page
 def Devices(request):
 	context = {}
 	devices = Device.objects.all()
+	print("length devices")
+	print(len(devices))
 	for i in xrange(0,len(devices)):
 		print(getattr(devices[i], 'deviceName'))
 		print(getattr(devices[i], 'deviceState'))
 		print(getattr(devices[i], 'trained'))
+		print(getattr(devices[i], 'address') + "Equals the address the device is in")
+		print(getattr(devices[i], 'city') + "Equals the city the device is in")
+		print(getattr(devices[i], 'state') + "Equals the state the device is in")
+
 	return render(request, 'devices.html', {'devices':devices})
 
 def DeviceAdded(request):
 	print(request)
-	newDevice = Device(
-		deviceName = request.POST.get('deviceName'),
-		make = request.POST.get('make'), 
-		modelNum = request.POST.get('modelNum'),
-		location = request.POST.get('location'), 
-		deviceState = "Untrained",
-		nodeid = request.POST.get('nodeid'),
-		photo = request.POST.get('photo'),)
+	newDevice = Device(deviceName = request.POST.get('deviceName'),
+	make = request.POST.get('make'), modelNum = request.POST.get('modelNum'),
+	location = request.POST.get('location'), deviceState = "Untrained",
+	photo = request.POST.get('photo'), state = request.POST.get('state'),
+	address = request.POST.get('address'), city = request.POST.get('city'),
+	zipCode = request.POST.get('zipCode'),)
 	newDevice.save()
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
+
+
 
 ########
 # View Functions for Training
@@ -60,7 +68,7 @@ def TrainDevice(request):
 	# Gets device from objects
 	## TODO: need to better filter that you're getting the correct device
 	print(request.POST)
-	device = Device.objects.all().get(deviceName = request.POST.get('Device'))
+	device = Device.objects.all().get(deviceName= request.POST.get('Device'))
 	print(device)
 	context = {}
 	return render(request, 'trainDevice.html', {'device':device})
@@ -135,11 +143,10 @@ def TrainingFinished(request):
 	return render(request, 'devices.html', {'devices':Device.objects.all()})
 
 def Get_Devices(request):
-	#print "Get_Devices!!!!DJBDJBDJB"
-	response_text = serializers.serialize("json", Device.objects.all())
-	#print("JSON Response = ", response_text)
-	#print("HEEEEEEEEEEEEE\nEeeeeeeeen\neeeeeeellll\nlllllllooo\noooooooooooooooo")
+    response_text = serializers.serialize("json", Device.objects.all())
+    print("JSON Response = ", response_text)
+    print("HEEEEEEEEEEEEE\nEeeeeeeeen\neeeeeeellll\nlllllllooo\noooooooooooooooo")
 
-	return HttpResponse(response_text, content_type="application/json")
+    return HttpResponse(response_text, content_type="application/json")
 
 

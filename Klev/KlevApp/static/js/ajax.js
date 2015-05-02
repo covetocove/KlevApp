@@ -1,5 +1,7 @@
 var req;
-
+$(document).ready(function() {
+  $('.modal-trigger').leanModal();
+  });
 // Sends a new request to update the to-do list
 function sendRequest() {
     if (window.XMLHttpRequest) {
