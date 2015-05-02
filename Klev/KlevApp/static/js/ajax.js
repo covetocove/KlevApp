@@ -1,5 +1,7 @@
 var req;
-
+$(document).ready(function() {
+  $('.modal-trigger').leanModal();
+  });
 // Sends a new request to update the to-do list
 function sendRequest() {
     if (window.XMLHttpRequest) {
@@ -34,15 +36,40 @@ function handleResponse() {
     var row = document.createElement("row");
     //row.innerHTML = devices[0]["fields"]["deviceName"];
     // Adds each new devices item to the list
-    $("h6").css("font-style", "italic"); // Not permanent, just syntax for jquery
     var string = "";
+    var string2 = "";
     //var string = "card"+devices[i]["fields"]["trained"];
-    
+    //$("h6").css("font-style", "italic"); // Not permanent, just syntax for jquery
+
     // Ajax request to update card color. NOT CORRECT, Look at syntax though
     for (var i = 0; i < devices.length; ++i) {
-      string = "card_"+devices[i]["fields"]["deviceName"];
+      string = "#card_"+devices[i]["fields"]["deviceName"];
       if (devices[i]["fields"]["deviceState"] == 'ON'){
-        $(string).className("card small blue");
+        $(string).removeClass("card small yellow");
+        $(string).removeClass("card small red");
+        $(string).removeClass("card small blue");
+        $(string).removeClass("card small green");
+        string2 = "#"+devices[i]["fields"]["deviceName"]+"_deviceState";
+        $(string2).text("State: On");
+        $(string).addClass("card small green");
+      }
+      if (devices[i]["fields"]["deviceState"] == 'OFF'){
+        $(string).removeClass("card small yellow");
+        $(string).removeClass("card small red");
+        $(string).removeClass("card small blue");
+        $(string).removeClass("card small green");
+        string2 = "#"+devices[i]["fields"]["deviceName"]+"_deviceState";
+        $(string2).text("State: Off");
+        $(string).addClass("card small red");
+      }
+      if (devices[i]["fields"]["deviceState"] == 'field value'){
+        $(string).removeClass("card small yellow");
+        $(string).removeClass("card small red");
+        $(string).removeClass("card small blue");
+        $(string).removeClass("card small green");
+        string2 = "#"+devices[i]["fields"]["deviceName"]+"_deviceState";
+        $(string2).text("State: Off");
+        $(string).addClass("card small red");
       }
     }
 

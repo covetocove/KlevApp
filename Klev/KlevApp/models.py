@@ -12,6 +12,10 @@ class Device(models.Model):
 	make = models.CharField(max_length = 42)
 	modelNum = models.CharField(max_length = 42)
 	location = models.CharField(max_length = 80)
+	address = models.CharField(max_length = 80)
+	city = models.CharField(max_length = 80)
+	state = models.CharField(max_length = 80)
+	zipCode = models.CharField(max_length = 10)
 	deviceState = models.CharField(max_length = 20)
 	trained = models.IntegerField(default = 0);
 	nodeid = models.IntegerField(default = -1);
