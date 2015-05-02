@@ -12,6 +12,26 @@ ABN_STATE_STR = "STATE_ABNORMAL"
 DELIMITER_SEQ = "---"
 DATA_DIR_PATH = ""
 
+GET_STATE_STR = "GET_STATE"
+
+#send this when we want training data, followed by a line with the number of data points (rows)  wanted
+GET_DATA_STR = "GET_DATA" 
+
+# When training, the node expects the two-class model string,
+# then the scaling parameters,
+# then the 1-class model to be sent
+# The end of each of those should be marked by an empty line (with \r),
+# i.e. the last 4 characters sent should be \r\n\r\n
+# Transaction should look like
+# send "SENDING_MODEL\r\n"
+# send two-class model string
+# send "\r\n"
+# send scaling-info
+# send "\r\n"
+# send one-class model string
+# send "\r\n"
+SENDING_MODEL = "SENDING_MODEL"
+
 def start_listen_for_updates(deviceName, nodeid):
 	print "Starting to listen for updates to {0}".format(deviceName)
 	listen_for_updates(deviceName, nodeid)
