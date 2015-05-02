@@ -12,11 +12,7 @@ OFF_STATE_STR = "STATE_OFF"
 ABN_STATE_STR = "STATE_ABNORMAL"
 DELIMITER_SEQ = "---"
 DATA_DIR_PATH = ""
-
 GET_STATE_STR = "GET_STATE"
-
-#send this when we want training data, followed by a line with the number of data points (rows)  wanted
-GET_DATA_STR = "GET_DATA" 
 
 # When training, the node expects the two-class model string,
 # then the scaling parameters,
@@ -44,7 +40,7 @@ class serial_message(object):
 		self.nid = nid
 		self.state = state
 
-def get_serial_data_line(tid = [1]):
+def get_serial_state_line(tid = [1]):
 	# TRANSMISSION_ID - NODE_ID - STATE
 	# janky way to increment the transmission id each time
 	this_tid = tid[0]
@@ -65,11 +61,11 @@ def get_serial_data_line(tid = [1]):
 
 	return serial_message(this_tid, 1, new_state)
 	
-def send_serial_data_ack(tid):
+def send_serial_state_ack(tid):
 	return
 
-def send_serial_data_req(rid, nid):
-	message = str(rid) + DELIMITER_SEQ + str(nid) + "\r\n"
+def send_serial_state_req(rid, nid):
+	message = GET_STATE_STR + str(rid) + DELIMITER_SEQ + str(nid) + "\r\n"
 	return
 
 # requests an update on the state of node_id node
@@ -84,14 +80,14 @@ def update_data(node_id, cur_req_id = [1], tids_processed = set()):
 	serial_input = None
 	while (serial_input == None):
 		print "looping on serial input"
-		send_serial_data_req(this_req_id, node_id)
+		send_serial_state_req(this_req_id, node_id)
 		time.sleep(0.25)
-		serial_input = get_serial_data_line()
+		serial_input = get_serial_state_line()
 		if (serial_input == None):
 			continue
 		if (serial_input.tid in tids_processed):
 			print "Repeated message"
-			send_serial_data_ack(serial_input.tid)
+			send_serial_state_ack(serial_input.tid)
 			serial_input = None
 		elif (serial_input.nid != node_id):
 			print "Different node id received"
@@ -108,7 +104,7 @@ def update_data(node_id, cur_req_id = [1], tids_processed = set()):
 	with open(file_path, "a") as f:
 		f.write(file_line)
 
-	send_serial_data_ack(serial_input.tid)
+	send_serial_state_ack(serial_input.tid)
 
 	return serial_input.state
 
