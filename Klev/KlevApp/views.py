@@ -102,7 +102,10 @@ def Visualize(request):
     print("trained")
 
     print(getattr(device, 'trained'))
-    context = {}
+    #context = {}
+    #f = open('/KlevApp/Klev/1.txt', 'r')
+    #contents = f.read()
+    #print(f)
     return render(request, 'devicePage.html', {'device':device})
 
 ########
