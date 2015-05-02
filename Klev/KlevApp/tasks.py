@@ -1,4 +1,4 @@
-# This is a file for the background tasks. 
+# This is a file for the background tasks.
 # Make sure to have django-background-task 0.1.8 installed
 # In order to have tasks run, run "python manage.py process_tasks"
 from background_task import background
@@ -14,6 +14,7 @@ START_CHAR = "#" #used to mark start of message. Can appear multiple times at st
 MESSAGE_NUM_END_CHAR = "|"
 DATA_DIR_PATH = ""
 GET_STATE_STR = "GET_STATE"
+DELIMITER_SEQ = "---"
 
 # When training, the node expects the two-class model string,
 # then the scaling parameters,
@@ -32,22 +33,22 @@ SENDING_TWO_CLASS_MODEL = "SENDING_TWO_CLASS_MODEL"
 SENDING_SCALING_PARAMS = "SENDING_SCALING_PARAMS"
 SENDING_ONE_CLASS_MODEL = "SENDING_ONE_CLASS_MODEL"
 
-# For all messages the Hub will send them until it gets 
+# For all messages the Hub will send them until it gets
 # a message back from the node with a matching transaction number
 # The node will send messages until it gets a message from the Hub
 # with a transaction number one greater than the last seen
 
 # Sample message from HUB
 # ###42|GET_DATA\r\n
-# ^^^^This message means that this is the 42nd transaction, 
-# the node should start sending data. 
+# ^^^^This message means that this is the 42nd transaction,
+# the node should start sending data.
 # The message the node sends back should start with ###42|
 # For sending the model, the hun should send:
 # ###51|SENDING_TWO_CLASS_MODEL\r\n
 # For this line, and each following one, the node
 # should send something back that looks like
 # ###51|ACK\r\n
-# The hub will send lines that start with ###<transaction number>| 
+# The hub will send lines that start with ###<transaction number>|
 # followed by the line from the model file being sent
 
 
@@ -84,7 +85,7 @@ def get_serial_state_line(tid = [1]):
 	print "new_state = " + new_state
 
 	return serial_message(this_tid, 1, new_state)
-	
+
 def send_serial_state_ack(tid):
 	return
 
@@ -120,7 +121,7 @@ def update_data(node_id, cur_req_id = [1], tids_processed = set()):
 	tids_processed.add(serial_input.tid)
 
 	file_path = DATA_DIR_PATH + str(node_id)
-		
+
 	timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
 	file_line = str(serial_input.nid) + DELIMITER_SEQ + timestamp + \
 				DELIMITER_SEQ + str(serial_input.state) + "\n"
@@ -154,7 +155,7 @@ def listen_for_updates(deviceName, nodeid):
 	# This needs to call itself to schedule itself again
 	listen_for_updates(deviceName, nodeid)
 
-	
+
 
 @background(schedule=1)
 def test_task():
