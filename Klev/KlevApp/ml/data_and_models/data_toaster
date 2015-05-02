@@ -1,0 +1,7 @@
+Usage: svm-scale [options] data_filename
+options:
+-l lower : x scaling lower limit (default -1)
+-u upper : x scaling upper limit (default +1)
+-y y_lower y_upper : y scaling limits (default: no y scaling)
+-s save_filename : save scaling parameters to save_filename
+-r restore_filename : restore scaling parameters from restore_filename
