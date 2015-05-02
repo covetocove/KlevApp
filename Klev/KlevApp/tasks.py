@@ -9,7 +9,8 @@ import time
 ON_STATE_STR = "STATE_ON"
 OFF_STATE_STR = "STATE_OFF"
 ABN_STATE_STR = "STATE_ABNORMAL"
-DELIMITER_SEQ = "---"
+START_CHAR = "#" #used to mark start of message. Can appear multiple times at start
+MESSAGE_NUM_END_CHAR = "|"
 DATA_DIR_PATH = ""
 
 GET_STATE_STR = "GET_STATE"
@@ -30,7 +31,30 @@ GET_DATA_STR = "GET_DATA"
 # send "\r\n"
 # send one-class model string
 # send "\r\n"
-SENDING_MODEL = "SENDING_MODEL"
+SENDING_TWO_CLASS_MODEL = "SENDING_TWO_CLASS_MODEL"
+SENDING_SCALING_PARAMS = "SENDING_SCALING_PARAMS"
+SENDING_ONE_CLASS_MODEL = "SENDING_ONE_CLASS_MODEL"
+
+# For all messages the Hub will send them until it gets 
+# a message back from the node with a matching transaction number
+# The node will send messages until it gets a message from the Hub
+# with a transaction number one greater than the last seen
+
+# Sample message from HUB
+# ###42|GET_DATA\r\n
+# ^^^^This message means that this is the 42nd transaction, 
+# the node should start sending data. 
+# The message the node sends back should start with ###42|
+# For sending the model, the hun should send:
+# ###51|SENDING_TWO_CLASS_MODEL\r\n
+# For this line, and each following one, the node
+# should send something back that looks like
+# ###51|ACK\r\n
+# The hub will send lines that start with ###<transaction number>| 
+# followed by the line from the model file being sent
+
+
+ACK = "ACK"
 
 def start_listen_for_updates(deviceName, nodeid):
 	print "Starting to listen for updates to {0}".format(deviceName)
