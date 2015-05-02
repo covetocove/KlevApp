@@ -63,16 +63,7 @@
           </div>
 
           {% else %}
-          <div class = "center-align"> 
 
-           <form action="{%url 'visualize' %}" method="post">
-              <input type="hidden" name="Device" value="{{device.deviceName}}">
-              <input type="hidden" name="nodeid" value="{{device.nodeid}}">
-              <button class="waves-effect waves-light btn" type="submit" name="action">Visualize </button>              
-              {% csrf_token %}
-
-            </form>
-          </div>d
         {% endif %}
 
         <div class="card-reveal">
