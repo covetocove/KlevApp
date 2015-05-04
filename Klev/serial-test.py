@@ -3,11 +3,14 @@
 import serial
 import time
 
-DELIMITER_SEQ = "---"
+MSG_START = "#"
+DELIMITER_SEQ = "|"
 DATA_DIR_PATH = ""
 
 tids_processed = set()
 cur_req_id = 1
+
+ser = serial.Serial(4, 57600, timeout=15)
 
 class serial_message(object):
 	def __init__(self, tid, nid, state):
@@ -22,10 +25,43 @@ def get_serial_line():
 	
 def send_serial_ack(tid):
 	return
-
+'''
 def send_serial_req(rid, nid):
-	message = str(rid) + DELIMITER_SEQ + str(nid)
+	message = str(rid) + DELIMITER_SEQ + str(nid) + chr(0) #end with null
 	return
+'''
+
+def get_data():
+	send_req_and_get_resp("GET_DATA")
+
+def send_two_class_model():
+	send_file("SENDING_TWO_CLASS_MODEL", "KlevApp/ml/data_and_models\data_dummy_sample.model")
+
+def send_one_class_model():
+	send_file("SENDING_ONE_CLASS_MODEL", "KlevApp/ml/data_and_models\data_dummy_sample.one_class_model")
+
+def send_scaling_params():
+	send_file("SENDING_SCALING_PARAMS", "KlevApp/ml/data_and_models\data_dummy_sample.send_scaling_params")
+
+def send_file(header, file_name):
+	send_req_and_get_resp(header)
+	model_file = open(file_name)
+	for line in model_file:
+		send_req_and_get_resp(line[:-1] + "\r\n\0x00")
+	model_file.close()
+
+def send_req_and_get_resp(msg_body):
+	global cur_req_id
+	global ser
+	message = MSG_START + str(cur_req_id) +  DELIMITER_SEQ + msg_body + "\r\n\x00"
+	ser.write(message)
+	print "--> " + message
+	cur_req_id += 1
+	ser.flush()
+	ser.readline() #need this to flush what we just sent?
+	print "<-- "+  ser.readline()
+	return
+
 
 # requests an update on the state of node_id node
 def update_data(node_id):
@@ -45,6 +81,8 @@ def update_data(node_id):
 		elif (serial_input.nid != node_id):
 			print "Different node id received"
 			serial_input = None
+		else:
+			print serial_input
 
 	tids_processed.add(serial_input.tid)
 
